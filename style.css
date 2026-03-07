@@ -1,0 +1,86 @@
+@font-face {
+	font-family: 'europlate';
+	src: url('EuroPlate.ttf');
+}
+
+html,body {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+body {
+	height: calc(100% - 40px);
+	margin: 20px;
+}
+
+.page {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.page_title {
+	font-family: 'europlate';
+	margin: 0px;
+}
+
+.page_content {
+	overflow: scroll;
+}
+
+.group-row  > * {
+	margin: 1px;
+}
+.group-column  > * {
+	margin: 1px;
+}
+
+.group-row, .group-column {
+	margin-top: 5px;
+}
+
+.input_group {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 7.5px;
+}
+
+.input_group * {
+	margin-right: 5px;
+}
+
+input {
+	min-width: 0px;
+}
+
+button {
+	cursor: pointer;
+}
+
+table tr th {
+  border: 1px gray solid; padding: 0px 7px 0px 7px
+}
+
+.page_navigation_group {
+	display: flex;
+	flex-direction: row;
+	margin-top: auto;
+}
+
+.page_navigation_group button {
+	margin: auto;
+	font-size: 24px;
+}
+
+.page_navigation_group * {
+	font-family: europlate;
+	align-self: center;
+}
+
+/* page-specific */
+
+#page_prematch .page_content {
+	display: flex;
+	flex-direction: column;
+}
