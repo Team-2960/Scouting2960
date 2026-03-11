@@ -27,6 +27,7 @@ body {
 
 .page_content {
 	overflow: scroll;
+	zoom: 1.4;
 }
 
 .group-row  > * {
@@ -52,10 +53,15 @@ body {
 
 input {
 	min-width: 0px;
+	font-size: initial;
 }
 
-button {
+button *, button {
 	cursor: pointer;
+}
+
+button label {
+	zoom: 1.4;
 }
 
 table tr th {

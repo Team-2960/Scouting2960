@@ -15,7 +15,7 @@ const pages = [
 		"items": [
 			{
 				"type": "group", "folds": true, "direction": "row", "summary": "climbing/initialization", "child_props": {
-					"style": "border: 1px solid gray;"
+					"style": {"border": "1px solid gray", "flex-grow": 1}
 				}, "self_props": {"style": {"border": "3px dashed blue"}}, "items": [
 					{
 						"type": "group", "direction": "column", "items": [
@@ -25,9 +25,13 @@ const pages = [
 			        ]},
 						]
 					},
-			    {"id": "tele_climb", "type": "radio", "name": "teleop climb", "choices": [
-			    	"level 1", "level 2", "level 3", "attempted", "not attempted"
-			    ]}
+					{
+						"type": "group", "direction": "column", "items": [
+			        {"id": "tele_climb", "type": "radio", "name": "teleop climb", "choices": [
+			        	"level 1", "level 2", "level 3", "attempted", "not attempted"
+			        ]}
+						]
+					}
 				]
 			},
 			{"id": "comments", "type": "text", "name": "comments"},
@@ -36,7 +40,7 @@ const pages = [
 				{"id": "tele_neutral_passes", "type": "counter", "name": "(teleop) pass from neutral zone", "increment": 3}
 			]},
 			{"type": "group", "direction": "row", "self_props": {"style": {"border": "2px dashed purple"}}, "items": [
-			  {"type": "group", "direction": "column", "items": [
+			  {"type": "group", "direction": "column", "self_props": {"style": {"flexGrow": 1000}}, "items": [
 			  	{"id": "balls_shot", "type": "slider", "name": "shot", "min": 0, "max": 100, "increment": 3},
 			  	{"id": "balls_missed", "type": "slider", "name": "missed", "min": 0, "max": 100, "increment": 3},
 			  ]},
@@ -70,8 +74,8 @@ const types = {
 			id: _
 		}
 	*/
-	"text": (item) => inputWithLabel(item.name, null, {'id': item.id}),
-	"number": (item) => inputWithLabel(item.name, "number", {'id': item.id}),
+	"text": (item) => inputWithLabel(item.name, null, {'id': item.id}, false, false, true),
+	"number": (item) => inputWithLabel(item.name, "number", {'id': item.id}, false, false, true),
 	"checkbox": (item) => inputWithLabel(item.name, "checkbox", {"id": item.id}, false, true),
 
 	 /*
@@ -90,7 +94,7 @@ const types = {
 			"step": item.increment ? item.increment : 1,
 			"value": item.min ? item.min : 0,
 			'id': item.id
-		}, true
+		}, true, false, true
 	),
 
 	/* 
@@ -201,16 +205,17 @@ const types = {
 		tracker.type = 'number';
 		tracker.id = item.id;
 		tracker.value = 0;
+		tracker.style.flexGrow = 1;
 
 		let incrementButton = document.createElement('button');
-		incrementButton.innerHTML = `+${item.increment}`;
+		incrementButton.innerHTML = `<label>+${item.increment}</label>`;
 		incrementButton.style.padding = '15px 25px';
 		incrementButton.onclick = (event) => {
 			document.getElementById(item.id).value = parseInt(document.getElementById(item.id).value) + item.increment;
 		}
 
 		let decrementButton = document.createElement('button');
-		decrementButton.innerHTML = `-${item.increment}`;
+		decrementButton.innerHTML = `<label>-${item.increment}</label>`;
 		decrementButton.style.padding = '15px 25px';
 		decrementButton.onclick = (event) => {
 			let newValue = parseInt(document.getElementById(item.id).value) - item.increment;
@@ -237,7 +242,7 @@ const types = {
 	*/
 	"button": (item) => {
 		let button = document.createElement('button');
-		button.innerHTML = item.label;
+		button.innerHTML = `<label>${item.label}</label>`;
 		button.onclick = item.onclick;
 
 		return button;
@@ -289,12 +294,13 @@ let app = {
 
 <- $ div.input_group containing input of type {type} with label {label} with properties {props}
 */
-function inputWithLabel(_label, type, props={}, track_value=false, flip=false) {
+function inputWithLabel(_label, type, props={}, track_value=false, flip=false, grow=false) {
 	let group = document.createElement('div');
 	group.classList.add('input_group');
 
 	let input = document.createElement('input');
 	if(type){input.type = type;}
+	if(grow){input.style.flexGrow = 1;}
 	input.placeholder = _label;
 
 	input = setProperties(input, props);
@@ -530,6 +536,7 @@ class Table {
 
 	render(return_element=false) {
 		let table = document.createElement('table');
+		table.style.width = '100%';
 
 		let header = document.createElement('tr');
 
@@ -550,7 +557,7 @@ class Table {
 			let rowEl = document.createElement('tr');
 
 			let pullButton = document.createElement('button');
-			pullButton.innerHTML = 'pull';
+			pullButton.innerHTML = '<label>EDIT</label>';
 			pullButton.onclick = (() => {
 				app.tables[this.id].pullRow(index);
 			})
@@ -558,7 +565,7 @@ class Table {
 			let row = [index == 0 ? this.first_row_label : index].concat(this.rows[index]).concat([pullButton]);
 			row.forEach((input, i) => {
 				let data = document.createElement('td');
-				let val = (this.pulled == index && i > 0) ? 'PULL' : input;
+				let val = (this.pulled == index && i > 0) ? 'EDITING' : input;
 
 				if(typeof val == "object" && val.tagName != undefined) {
 				  data.appendChild(val);
