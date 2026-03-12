@@ -76,38 +76,15 @@ const pages = [
 		"id": "page_export",
 		"title": "export",
 		"onactive": () => {
-			app.data = getAllValues(true);
-			
-			app.values = app.data.map(p => p.map(i => Object.values(i)[0]).join('\t')).join('\t');
-			app.headers = app.data.map(p => p.map(i => Object.keys(i)[0]).join('\t')).join('\t');
-
 			for(let i in app.qrs) {
 				document.getElementById(app.qrs[i].id).innerHTML = '';
 			  new QRCode(app.qrs[i].id, {
-					"text": app.values
+					"text": getAllValues().join('\t')
 				});
 			}
-
-			let text = document.getElementById('output');
-			text.value = app.values;
-			text.oninput = event => {
-				event.target.value = app.values;
-			};
-
-			let headers = document.getElementById('headers');
-			headers.value = app.headers;
-			headers.oninput = event => {
-				event.target.value = app.headers;
-			};
 		},
 		"items": [
-			{"type": "group", "direction": "column", "child_props": {"style": {"margin": "50px 0px 50px 0px"}}, "items": [
-			  {"id": "qr", "type": "qr"},
-			]},
-			{"type": "group", "direction": "column", "summary": "debug", "folds": true, "items": [
-				{"id": "output", "name": "data", "type": "text", "skip": true},
-				{"id": "headers", "name": "headers", "type": "text", "skip": true},
-			]}
+			{"id": "qr", "type": "qr"}
 		]
 	}
 ];
@@ -320,7 +297,7 @@ const types = {
 }
 
 // not defined in here? will fetch from input id
-// no id? returns null? item.skip? == true? no value!
+// no id? returns null? no value!
 const fetchers = {
 	"table": (item) => {
 		let combined = '';
@@ -337,15 +314,14 @@ const fetchers = {
 				return i;
 			}
 		}
-		return -1;
+		return "UNSELECTED";
 	},
 	"slider": (item) => {
 		return document.getElementById(item.id).value;
 	},
 	"checkbox": (item) => {
 		return document.getElementById(item.id).checked ? 1 : 0;
-	},
-	"qr": () => null
+	}
 }
 
 // globals namespace
@@ -540,7 +516,7 @@ function getValue(item) {
 /*
 <- values of all items
 */
-function getAllValues(include_headers=false, headers_only=false) {
+function getAllValues() {
 	let sniffItems = (items) => {
 		let values = [];
 
@@ -550,7 +526,7 @@ function getAllValues(include_headers=false, headers_only=false) {
 				continue;
 			}
 
-			if(!item.hasOwnProperty('id') || item.skip) {
+			if(!item.hasOwnProperty('id')) {
 				continue;
 			}
 
@@ -560,17 +536,7 @@ function getAllValues(include_headers=false, headers_only=false) {
 				continue
 			}
 
-			if(include_headers) {
-				if(headers_only) {
-					values.push(item.id);
-				} else {
-				  let obj = {};
-				  obj[item.id] = value;
-				  values.push(obj);
-				}
-			} else {
-				values.push(value);
-			}
+			values.push(value)
 		}
 
 		return values;
