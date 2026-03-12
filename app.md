@@ -34,8 +34,7 @@
 - [x] optimize / code review (short, setup for getting)
 - [x] setup value getting [3/4]
 - [x] table funcs [3/5]
-- [ ] fix styling [3/11]
-- [ ] test day 2 [3/11]
-- [ ] ui updates based on feedback
+- [x] fix styling [3/11]
+- [x] test day 2 [3/11]
+- [x] ui updates based on feedback
 - [ ] qr codes
-- [ ] piecewise equation sliders

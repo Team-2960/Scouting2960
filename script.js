@@ -36,24 +36,38 @@ const pages = [
 			},
 			{"id": "comments", "type": "text", "name": "comments"},
 			{"type": "group", "direction": "column", "self_props": {"style": {"border": "3px dashed orange"}}, "items": [
-				{"id": "auton_neutral_passes", "type": "counter", "name": "(auton) pass from neutral zone", "increment": 3},
-				{"id": "tele_neutral_passes", "type": "counter", "name": "(teleop) pass from neutral zone", "increment": 3}
+ 				{"id": "auton_neutral_passes", "type": "counter", "name": "(auton) pass from neutral zone", "increment": 3},
+ 				{"id": "tele_neutral_passes", "type": "counter", "name": "(teleop) pass from neutral zone", "increment": 3}
 			]},
-			{"type": "group", "direction": "row", "self_props": {"style": {"border": "2px dashed purple"}}, "items": [
-			  {"type": "group", "direction": "column", "self_props": {"style": {"flexGrow": 1000}}, "items": [
-			  	{"id": "balls_shot", "type": "slider", "name": "shot", "min": 0, "max": 100, "increment": 3},
-			  	{"id": "balls_missed", "type": "slider", "name": "missed", "min": 0, "max": 100, "increment": 3},
-			  ]},
-			  {"type": "group", "direction": "column", "self_props": {"style": {"flex": "1"}}, "child_props": {"style": {"flex": "1"}}, "items": [
-					{"label": "PUSH", "type": "button", "onclick": () => {
-						app.tables["sprees"].push();
-					}}
+			{"type": "group", "direction": "column", "self_props": {"style": {"border": "2px dashed purple"}}, "items": [
+			  {"type": "group", "direction": "row", "child_props": {"style": {"flexGrow": 1, "padding": "100px 0px 100px 0px"}}, "items": [
+					{"type": "button", "label": "+1 missed", "onclick": () => { addToSliderButton('balls_missed', 1) }},
+					{"type": "button", "label": "+3 shot", "onclick": () => { addToSliderButton('balls_shot', 3) }},
 				]},
+			  {"type": "group", "direction": "row", "child_props": {"style": {"flexGrow": 1, "padding": "10px 0px 10px 0px", "backgroundColor": "coral"}}, "items": [
+					{"type": "button", "label": "-1 missed", "onclick": () => { addToSliderButton('balls_missed', -1) }},
+					{"type": "button", "label": "-3 shot", "onclick": () => { addToSliderButton('balls_shot', -3) }},
+				]},
+			  {"type": "group", "direction": "row", "self_props": {"style": {"border": "1px dashed blue"}}, "items": [
+			    {"type": "group", "direction": "column", "self_props": {"style": {"flexGrow": 1}}, "items": [
+			    	{"id": "balls_shot", "type": "slider", "name": "shot", "min": 0, "max": 100, "increment": 3},
+			    	{"id": "balls_missed", "type": "slider", "name": "missed", "min": 0, "max": 100, "increment": 1},
+			    ]},
+			    {"type": "group", "direction": "column", "self_props": {"style": {"flex": "1"}}, "child_props": {"style": {"flex": "1"}}, "items": [
+			  		{"label": "ADD", "type": "button", "onclick": () => {
+			  			app.tables["sprees"].push();
+				      document.querySelectorAll('#balls_shot, #balls_missed').forEach((element) => {
+				      	element.value = 0;
+				      	element.oninput({"target": element});
+				      })
+			  		}}
+			  	]},
+			  ]},
 			]},
 			{"id": "sprees", "type": "table", "columns": ["balls made", "balls missed"], "inputs": [
 				"balls_shot", "balls_missed"
 			], "first_row_label": "A"},
-		  {"label": "* POP *", "type": "button", "onclick": () => {
+		  {"label": "Delete last row", "type": "button", "onclick": () => {
 		  	app.tables["sprees"].pop();
 		  }}
 		]
@@ -61,10 +75,19 @@ const pages = [
 	{
 		"id": "page_export",
 		"title": "export",
-		"skip": true,
-		"items": []
+		"items": [
+			{"id": "qr", "type": "qr", "options": {text: "test text"}}
+		]
 	}
 ];
+
+// case-specific function
+function addToSliderButton(id, amount) {
+  let e = document.getElementById(id);
+	e.value = parseInt(e.value) + amount;
+	e.oninput({"target": e});
+}
+
 
 // use as reference
 const types = {
@@ -183,6 +206,17 @@ const types = {
 		
 		return container;
 	},
+	/* 
+	-> item=qr: {
+		id: _
+	}
+	*/
+	"qr": (item) => {
+		let container = document.createElement('div');
+		container.id = item.id;
+		return container;
+	},
+
 
 	/*
 	-> item=counter: {
@@ -281,7 +315,8 @@ const fetchers = {
 let app = {
 	"active_page": 0,
 	// couldnt figure out a smarter way in 10 minutes so im doing this
-	"tables": {}
+	"tables": {},
+	"qrs": {}
 }
 
 /*
