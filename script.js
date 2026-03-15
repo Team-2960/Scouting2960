@@ -50,8 +50,8 @@ const pages = [
 				]},
 			  {"type": "group", "direction": "row", "self_props": {"style": {"border": "1px dashed blue"}}, "items": [
 			    {"type": "group", "direction": "column", "self_props": {"style": {"flexGrow": 1}}, "items": [
-			    	{"id": "balls_shot", "type": "slider", "name": "shot", "min": 0, "max": 100, "increment": 3},
-			    	{"id": "balls_missed", "type": "slider", "name": "missed", "min": 0, "max": 100, "increment": 1},
+			    	{"id": "balls_shot", "skip": true, "type": "slider", "name": "shot", "min": 0, "max": 100, "increment": 3},
+			    	{"id": "balls_missed", "skip": true, "type": "slider", "name": "missed", "min": 0, "max": 100, "increment": 1},
 			    ]},
 			    {"type": "group", "direction": "column", "self_props": {"style": {"flex": "1"}}, "child_props": {"style": {"flex": "1"}}, "items": [
 			  		{"label": "ADD", "type": "button", "onclick": () => {
@@ -78,8 +78,8 @@ const pages = [
 		"onactive": () => {
 			app.data = getAllValues(true);
 			
-			app.values = app.data.map(p => p.map(i => Object.values(i)[0]).join('\t')).join('\t');
-			app.headers = app.data.map(p => p.map(i => Object.keys(i)[0]).join('\t')).join('\t');
+			app.values = app.data.map(p => p.map(i => Object.values(i)[0]).join('\t')).join('\t') + '\n';
+			app.headers = app.data.map(p => p.map(i => Object.keys(i)[0]).join('\t')).join('\t') + '\n';
 
 			for(let i in app.qrs) {
 				document.getElementById(app.qrs[i].id).innerHTML = '';
