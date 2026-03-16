@@ -78,8 +78,8 @@ const pages = [
 		"onactive": () => {
 			app.data = getAllValues(true);
 			
-			app.values = app.data.map(p => p.map(i => Object.values(i)[0]).join('\t')).join('\t') + '\n';
-			app.headers = app.data.map(p => p.map(i => Object.keys(i)[0]).join('\t')).join('\t') + '\n';
+			app.values = app.data.map(p => p.map(i => Object.values(i)[0]).join('\t')).join('\t') + '\r';
+			app.headers = app.data.map(p => p.map(i => Object.keys(i)[0]).join('\t')).join('\t') + '\r';
 
 			for(let i in app.qrs) {
 				document.getElementById(app.qrs[i].id).innerHTML = '';
