@@ -55,6 +55,16 @@ const pages = [
 			    ]},
 			    {"type": "group", "direction": "column", "self_props": {"style": {"flex": "1"}}, "child_props": {"style": {"flex": "1"}}, "items": [
 			  		{"label": "ADD", "type": "button", "onclick": () => {
+							// team is mad at me, hotfix 3:
+							let shot = document.getElementById('balls_shot');
+							let missed = document.getElementById('balls_missed');
+
+							if(missed.value > shot.value) {
+								missed.value = shot.value;
+							}
+
+							// hotfix ends here
+
 			  			app.tables["sprees"].push();
 				      document.querySelectorAll('#balls_shot, #balls_missed').forEach((element) => {
 				      	element.value = 0;
