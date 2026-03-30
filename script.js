@@ -42,31 +42,21 @@ const pages = [
 			{"type": "group", "direction": "column", "self_props": {"style": {"border": "2px dashed purple"}}, "items": [
 			  {"type": "group", "direction": "row", "child_props": {"style": {"flexGrow": 1, "padding": "100px 0px 100px 0px"}}, "items": [
 					{"type": "button", "label": "+1 missed", "onclick": () => { addToSliderButton('balls_missed', 1) }},
-					{"type": "button", "label": "+3 shot", "onclick": () => { addToSliderButton('balls_shot', 3) }},
+					{"type": "button", "label": "+3 made", "onclick": () => { addToSliderButton('balls_made', 3) }},
 				]},
 			  {"type": "group", "direction": "row", "child_props": {"style": {"flexGrow": 1, "padding": "10px 0px 10px 0px", "backgroundColor": "coral"}}, "items": [
 					{"type": "button", "label": "-1 missed", "onclick": () => { addToSliderButton('balls_missed', -1) }},
-					{"type": "button", "label": "-3 shot", "onclick": () => { addToSliderButton('balls_shot', -3) }},
+					{"type": "button", "label": "-3 made", "onclick": () => { addToSliderButton('balls_made', -3) }},
 				]},
 			  {"type": "group", "direction": "row", "self_props": {"style": {"border": "1px dashed blue"}}, "items": [
 			    {"type": "group", "direction": "column", "self_props": {"style": {"flexGrow": 1}}, "items": [
-			    	{"id": "balls_shot", "skip": true, "type": "slider", "name": "shot", "min": 0, "max": 100, "increment": 3},
+			    	{"id": "balls_made", "skip": true, "type": "slider", "name": "made", "min": 0, "max": 100, "increment": 3},
 			    	{"id": "balls_missed", "skip": true, "type": "slider", "name": "missed", "min": 0, "max": 100, "increment": 1},
 			    ]},
 			    {"type": "group", "direction": "column", "self_props": {"style": {"flex": "1"}}, "child_props": {"style": {"flex": "1"}}, "items": [
 			  		{"label": "ADD", "type": "button", "onclick": () => {
-							// team is mad at me, hotfix 3:
-							let shot = document.getElementById('balls_shot');
-							let missed = document.getElementById('balls_missed');
-
-							if(missed.value > shot.value) {
-								missed.value = shot.value;
-							}
-
-							// hotfix ends here
-
 			  			app.tables["sprees"].push();
-				      document.querySelectorAll('#balls_shot, #balls_missed').forEach((element) => {
+				      document.querySelectorAll('#balls_made, #balls_missed').forEach((element) => {
 				      	element.value = 0;
 				      	element.oninput({"target": element});
 				      })
@@ -75,7 +65,7 @@ const pages = [
 			  ]},
 			]},
 			{"id": "sprees", "type": "table", "columns": ["balls made", "balls missed"], "inputs": [
-				"balls_shot", "balls_missed"
+				"balls_made", "balls_missed"
 			], "first_row_label": "A"},
 		  {"label": "Delete last row", "type": "button", "onclick": () => {
 		  	app.tables["sprees"].pop();
@@ -135,12 +125,13 @@ const types = {
 	/*
 		-> item=text, item=number, item=checkbox: {
 			name: _,
-			id: _
+			id: _,
+			self_props: _
 		}
 	*/
-	"text": (item) => inputWithLabel(item.name, null, {'id': item.id}, false, false, true),
-	"number": (item) => inputWithLabel(item.name, "number", {'id': item.id}, false, false, true),
-	"checkbox": (item) => inputWithLabel(item.name, "checkbox", {"id": item.id}, false, true),
+	"text": (item) => inputWithLabel(item.name, null, appendId(item.id, item.self_props ? item.self_props : null), false, false, true),
+	"number": (item) => inputWithLabel(item.name, "number", appendId(item.id, item.self_props ? item.self_props : null), false, false, true),
+	"checkbox": (item) => inputWithLabel(item.name, "checkbox", appendId(item.id, item.self_props ? item.self_props : null), false, true),
 
 	 /*
    -> item=slider: {
@@ -148,7 +139,8 @@ const types = {
      id: _,
      min: 0,
      max: 100,
-		 step: 1
+		 step: 1,
+		 self_props: _
 	 }
 	 */
 	"slider": (item) => inputWithLabel(
@@ -364,6 +356,15 @@ let app = {
 	// couldnt figure out a smarter way in 10 minutes so im doing this
 	"tables": {},
 	"qrs": {}
+}
+
+function appendId(id, props) {
+	if(props) {
+		let obj = props;
+		obj.id = id;
+		return obj;
+	}
+	return {"id": id};
 }
 
 /*
