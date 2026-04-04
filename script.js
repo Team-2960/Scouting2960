@@ -76,6 +76,7 @@ const pages = [
 		"id": "page_export",
 		"title": "export",
 		"onactive": () => {
+			// RENDER QR CODE
 			app.data = getAllValues(true);
 			
 			app.values = app.data.map(p => p.map(i => Object.values(i)[0]).join('\t')).join('\t') + '\r';
@@ -99,12 +100,60 @@ const pages = [
 			headers.oninput = event => {
 				event.target.value = app.headers;
 			};
+			// HISTORY LIST
+			app.history = JSON.parse(localStorage.getItem('history'));
+			app.history = (app.history != null) ? app.history : [];
+
+			document.getElementById('past_matches').innerHTML = '';
+
+
+			for(const [history_index, match_string] of Object.entries(app.history)) {
+				const match = types.group({"folds": true, "closed": true, "direction": "column", "summary": `history #${parseInt(history_index)+1}`, "items": [
+					{"name": "data", "type": "text", "skip": true, "id": `history${history_index}_text`},
+					{"type": "button", "label": "load QR (over current)", "onclick": (event) => {
+						for(let i in app.qrs) {
+							document.getElementById(app.qrs[i].id).innerHTML = '';
+						  new QRCode(app.qrs[i].id, {
+								"text": match_string
+							});
+						}
+					}}
+				]})
+				document.getElementById('past_matches').appendChild(match)
+				document.getElementById(`history${history_index}_text`).value = match_string;
+				document.getElementById(`history${history_index}_text`).oninput = event => {
+					event.target.value = match_string;
+				}
+			}
 		},
 		"items": [
 			{"type": "group", "direction": "column", "child_props": {"style": {"margin": "50px 0px 50px 0px"}}, "items": [
 			  {"id": "qr", "type": "qr"},
 			]},
-			{"type": "group", "direction": "column", "summary": "debug", "folds": true, "items": [
+			{"type": "group", "direction": "column", "folds": true, "summary": "history", "items": [
+				{"id": "reset", "type":"button", "self_props": {"style": {"padding": "20px 0px"}}, "label": "save (TEMPORARY) and reset", "onclick": (event) => {
+					// add to history & reset
+					app.history.push(app.values);
+					localStorage.setItem('history', JSON.stringify(app.history)) 
+					
+					window.location.reload();
+					location.reload();
+				}},
+			  {"type": "group", "direction": "column", "folds": true, "summary": "past matches", "self_props": {"id": "past_matches", "style": {"border": "3px dashed blue"}}, "items": []},
+				{"id": "show_mega_qr", "type":"button", "label": "show cumulative", "self_props": {"style": {"marginBottom": "30px"}}, "onclick": (event) => {
+						for(let i in app.qrs) {
+							document.getElementById(app.qrs[i].id).innerHTML = '';
+						  new QRCode(app.qrs[i].id, {
+								"text": app.history.join('')
+							});
+						}
+				}},
+				{"id": "clear_history", "type":"button", "label": "clear history", "onclick": (event) => {
+					localStorage.clear();
+					scrollToPage(2);
+				}}
+			]},
+			{"type": "group", "direction": "column", "summary": "debug", "folds": true, "closed": true, "items": [
 				{"id": "output", "name": "data", "type": "text", "skip": true},
 				{"id": "headers", "name": "headers", "type": "text", "skip": true},
 			]}
@@ -186,7 +235,8 @@ const types = {
 		child_props: {prop: val...},
 		self_props: {prop: val...},
 		folds: true|false,
-		summary: _
+		summary: _,
+		closed: true|false
 	}
 	*/
 	"group": (item) => {
@@ -212,6 +262,10 @@ const types = {
 
 		if(item.hasOwnProperty('self_props')) {
 		  rowElement = setProperties(rowElement, item.self_props);
+		}
+		
+		if(item.hasOwnProperty('closed') && item.closed) {
+			details.open = false;
 		}
 
 		return item.folds ? details : rowElement;
@@ -309,13 +363,16 @@ const types = {
 	/*
 	-> item=button: {
 		label: _,
-		onclick: function
+		onclick: function,
+		self_props: _
 	}
 	*/
 	"button": (item) => {
 		let button = document.createElement('button');
 		button.innerHTML = `<label>${item.label}</label>`;
 		button.onclick = item.onclick;
+
+		item.self_props ? setProperties(button, item.self_props) : null
 
 		return button;
 	}
@@ -347,7 +404,8 @@ const fetchers = {
 	"checkbox": (item) => {
 		return document.getElementById(item.id).checked ? 1 : 0;
 	},
-	"qr": () => null
+	"qr": () => null,
+	"group": () => null
 }
 
 // globals namespace
@@ -355,7 +413,8 @@ let app = {
 	"active_page": 0,
 	// couldnt figure out a smarter way in 10 minutes so im doing this
 	"tables": {},
-	"qrs": {}
+	"qrs": {},
+	"history": []
 }
 
 function appendId(id, props) {
@@ -605,7 +664,7 @@ function getAllValues(include_headers=false, headers_only=false) {
 */
 function setProperties(element, properties, path=[]) {
 	for(const [prop, val] of Object.entries(properties)) {
-		if(typeof val == "object") {
+		if(typeof val == "object" && val != null) {
 			element = setProperties(element, val, path.concat(prop));
 			continue;
 		}
