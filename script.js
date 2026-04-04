@@ -144,7 +144,7 @@ const pages = [
 						for(let i in app.qrs) {
 							document.getElementById(app.qrs[i].id).innerHTML = '';
 						  new QRCode(app.qrs[i].id, {
-								"text": app.history.join('')
+								"text": app.history.join('\r')
 							});
 						}
 				}},
