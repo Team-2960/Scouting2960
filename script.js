@@ -23,9 +23,10 @@ const helperFunctions = {
       });
     }
   },
-  exportPage: () => {
-    // RENDER QR CODE
+	updateAppData: () => {
     app.data = getAllValues(true);
+
+		app.data.push([{"epoch": Date.now()}]);
 
     app.values =
       app.data
@@ -35,35 +36,9 @@ const helperFunctions = {
       app.data
         .map((p) => p.map((i) => Object.keys(i)[0]).join("\t"))
         .join("\t") + "\r";
-
-    helperFunctions.makeQR(app.values, "CURRENT");
-
-    let text = document.getElementById("output");
-    text.value = app.values;
-    text.oninput = (event) => {
-      event.target.value = app.values;
-    };
-
-    let headers = document.getElementById("headers");
-    headers.value = app.headers;
-    headers.oninput = (event) => {
-      event.target.value = app.headers;
-    };
-
-    // HISTORY LIST
-    app.history = JSON.parse(localStorage.getItem("history"));
-    app.history = app.history != null ? app.history : [];
-		app.cumulative = app.history.join('');
-
-		let cumulative = document.getElementById('cumulative');
-    cumulative.value = app.cumulative;
-    cumulative.oninput = (event) => {
-      event.target.value = app.cumulative;
-    };
-
-
+	},
+	updateHistory: () => {
     document.getElementById("past_matches").innerHTML = "";
-
     for (const [history_index, match_string] of Object.entries(app.history)) {
       const match = types.group({
         folds: true,
@@ -90,14 +65,42 @@ const helperFunctions = {
         ],
       });
       document.getElementById("past_matches").appendChild(match);
-      document.getElementById(`history${history_index}_text`).value =
-        match_string;
+      document.getElementById(`history${history_index}_text`).value = match_string;
       document.getElementById(`history${history_index}_text`).oninput = (
         event,
       ) => {
         event.target.value = match_string;
       };
     }
+	},
+  exportPage: () => {
+		helperFunctions.updateAppData();
+    helperFunctions.makeQR(app.values, "CURRENT");
+
+    let text = document.getElementById("output");
+    text.value = app.values;
+    text.oninput = (event) => {
+      event.target.value = app.values;
+    };
+
+    let headers = document.getElementById("headers");
+    headers.value = app.headers;
+    headers.oninput = (event) => {
+      event.target.value = app.headers;
+    };
+
+    // HISTORY LIST
+    app.history = JSON.parse(localStorage.getItem("history"));
+    app.history = app.history != null ? app.history : [];
+		app.cumulative = app.history.join('');
+
+		let cumulative = document.getElementById('cumulative');
+    cumulative.value = app.cumulative;
+    cumulative.oninput = (event) => {
+      event.target.value = app.cumulative;
+    };
+
+		helperFunctions.updateHistory();
   },
   nestClearButton: (nestLevel) => {
     const nested = {
@@ -106,7 +109,7 @@ const helperFunctions = {
       label: "clear history",
       onclick: (event) => {
         localStorage.clear();
-        scrollToPage(2);
+				updateHistory();
       },
     };
 
@@ -346,20 +349,22 @@ const pages = [
         child_props: { style: { margin: "50px 0px 50px 0px" } },
         items: [{ id: "qr", type: "qr" }],
       },
-			{"type": "button", "label": "show current", "onclick": () => {
+			{"type": "button", "label": "show current", "self_props": {"style": {"width": '100%'}}, "onclick": () => {
 				helperFunctions.makeQR(app.values, "CURRENT");
 			}},
+			// TODO add save file here
       {
         type: "group",
         direction: "column",
         folds: true,
+				closed: true,
         summary: "history",
         items: [
           {
             id: "reset",
             type: "button",
             self_props: { style: { padding: "20px 0px" } },
-            label: "save (TEMPORARY) and reset",
+            label: "save to history (careful!) and reset",
             onclick: (event) => {
               // add to history & reset
               app.history.push(app.values);
@@ -367,6 +372,8 @@ const pages = [
 
               window.location.reload();
               location.reload();
+
+							helperFunctions.updateHistory();
             },
           },
           {
@@ -379,15 +386,6 @@ const pages = [
               style: { border: "3px dashed blue" },
             },
             items: [],
-          },
-          {
-            id: "show_mega_qr",
-            type: "button",
-            label: "show cumulative",
-            self_props: { style: { marginBottom: "30px" } },
-            onclick: (event) => {
-              helperFunctions.makeQR(app.history.join("\r"), "CUMULATIVE");
-            },
           },
 					helperFunctions.nestClearButton(5)
         ],
