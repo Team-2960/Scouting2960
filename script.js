@@ -30,10 +30,12 @@ const helperFunctions = {
 
     app.values =
       app.data
+				.filter(p => p.length > 0)
         .map((p) => p.map((i) => Object.values(i)[0]).join("\t"))
         .join("\t") + "\r";
     app.headers =
       app.data
+				.filter(p => p.length > 0)
         .map((p) => p.map((i) => Object.keys(i)[0]).join("\t"))
         .join("\t") + "\r";
 	},
