@@ -111,7 +111,7 @@ const helperFunctions = {
       label: "clear history",
       onclick: (event) => {
         localStorage.clear();
-				updateHistory();
+				helperFunctions.updateHistory();
       },
     };
 
