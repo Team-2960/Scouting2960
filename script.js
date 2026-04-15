@@ -102,6 +102,15 @@ const helperFunctions = {
       event.target.value = app.cumulative;
     };
 
+		// download file
+		const blob = new Blob([(app.cumulative.concat(app.values)).replaceAll('\r', '\r\n')], {'type': 'text/tab-seperated-values'});
+		const downloadLink = document.getElementById('download_link');
+		downloadLink.href = window.URL.createObjectURL(blob);
+		downloadLink.download = `Tablet-${Date.now()}.tsv`;
+		downloadLink.click()
+		const blob_without_current = new Blob([app.cumulative.replaceAll('\r', '\r\n')], {'type': 'text/tab-seperated-values'});
+		downloadLink.href = window.URL.createObjectURL(blob_without_current);
+
 		helperFunctions.updateHistory();
   },
   nestClearButton: (nestLevel) => {
@@ -355,11 +364,21 @@ const pages = [
 				helperFunctions.makeQR(app.values, "CURRENT");
 			}},
 			// TODO add save file here
+			{
+				type: "custom",
+				maker: () => {
+					const downloadLink = document.createElement('a');
+					downloadLink.id = 'download_link';
+					downloadLink.innerHTML = '<button style="font-size: 16px; padding: 16px; width: 100%;">Download cumulative TSV</button>'
+
+					return downloadLink;
+				}
+			},
       {
         type: "group",
         direction: "column",
         folds: true,
-				closed: true,
+				closed: false,
         summary: "history",
         items: [
           {
