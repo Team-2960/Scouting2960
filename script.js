@@ -157,7 +157,7 @@ const pages = [
       {
         type: "group",
         direction: "row",
-        child_props: { style: { flexGrow: "1" }, id: "subtract_last_auton" },
+        child_props: { style: { flexGrow: "1", height: "75px" }, id: "subtract_last_auton" },
         items: [
           { id: "subtract_last_auton", type: "button", label: "subtract last" },
         ]
@@ -298,7 +298,7 @@ const pages = [
       {
         type: "group",
         direction: "row",
-        child_props: { style: { flexGrow: "1" }, id: "subtract_last" },
+        child_props: { style: { flexGrow: "1", height: "75px" }, id: "subtract_last" },
         items: [
           { id: "subtract_last", type: "button", label: "subtract last" },
         ]
