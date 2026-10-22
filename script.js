@@ -150,95 +150,195 @@ const pages = [
     ],
   },
   {
-    id: "page_main",
-    title: "scout",
+    id: "page_auton",
+    title: "auton",
+    items: [
+      { id: "auton_moved", type: "checkbox", name: "moved in auton? (24+ inches)" },
+      {
+        type: "group",
+        direction: "row",
+        child_props: { style: { flexGrow: "1" }, id: "subtract_last_auton" },
+        items: [
+          { id: "subtract_last_auton", type: "button", label: "subtract last" },
+        ]
+      },
+      {
+        type: "group",
+        direction: "column",
+        self_props: {
+          style: { margin: "0px" }
+        },
+        child_props: {},
+        items: [
+          {
+            type: "group",
+            direction: "row",
+            child_props: {
+              //style: { flexGrow: 1, padding: "100px 0px 100px 0px" },
+              style: { height: "200px" },
+            },
+            items: [
+              {
+                type: "button",
+                label: "made low",
+                self_props: {
+                  style: { flexGrow: 2 }
+                },
+                onclick: () => {
+                  helperFunctions.addToSliderButton("made_low_auton", 1);
+                  document.getElementById('subtract_last_auton').onclick = () => { helperFunctions.addToSliderButton("made_low_auton", -1);}
+                },
+              },
+              {
+                type: "button",
+                label: "made high",
+                self_props: {
+                  style: { flexGrow: 3 }
+                },
+                onclick: () => {
+                  helperFunctions.addToSliderButton("made_high_auton", 1);
+                  document.getElementById('subtract_last_auton').onclick = () => { helperFunctions.addToSliderButton("made_high_auton", -1);}
+                },
+              },
+            ],
+          },
+          {
+            type: "group",
+            direction: "row",
+            self_props: {
+              style: { margin: "0px" }
+            },
+            child_props: {
+              //style: { flexGrow: 1, padding: "100px 0px 100px 0px" },
+              style: { height: "150px", backgroundColor: "#FF6560" },
+            },
+            items: [
+              {
+                type: "button",
+                label: "missed low",
+                self_props: {
+                  style: { flexGrow: 2 }
+                },
+                onclick: () => {
+                  helperFunctions.addToSliderButton("missed_low_auton", 1);
+                  document.getElementById('subtract_last_auton').onclick = () => { helperFunctions.addToSliderButton("missed_low_auton", -1);}
+                },
+              },
+              {
+                type: "button",
+                label: "missed high",
+                self_props: {
+                  style: { flexGrow: 3.1 }
+                },
+                onclick: () => {
+                  helperFunctions.addToSliderButton("missed_high_auton", 1);
+                  document.getElementById('subtract_last_auton').onclick = () => { helperFunctions.addToSliderButton("missed_high_auton", -1);}
+                },
+              },
+            ],
+          },
+          {
+            type: "group",
+            direction: "column",
+            items: [
+              {
+                type: "group",
+                direction: "column",
+                items: [
+                  {
+                    id: "made_low_auton",
+                    type: "slider",
+                    name: "made low",
+                    min: 0,
+                    max: 20,
+                    increment: 1,
+                  },
+                  {
+                    id: "missed_low_auton",
+                    type: "slider",
+                    name: "missed low",
+                    min: 0,
+                    max: 20,
+                    increment: 1,
+                  },
+                ]
+              },
+              {
+                type: "group",
+                direction: "column",
+                items: [
+                  {
+                    id: "made_high_auton",
+                    type: "slider",
+                    name: "made high",
+                    min: 0,
+                    max: 50,
+                    increment: 1,
+                  },
+                  {
+                    id: "missed_high_auton",
+                    type: "slider",
+                    name: "missed high",
+                    min: 0,
+                    max: 50,
+                    increment: 1,
+                  },
+                ]
+              }
+            ]
+          },
+        ]
+      }
+    ]
+  },
+  {
+    id: "page_teleop",
+    title: "teleop",
     items: [
       {
         type: "group",
-        folds: true,
         direction: "row",
-        summary: "climbing/initialization",
-        child_props: {
-          style: { border: "1px solid gray", "flex-grow": 1 },
+        child_props: { style: { flexGrow: "1" }, id: "subtract_last" },
+        items: [
+          { id: "subtract_last", type: "button", label: "subtract last" },
+        ]
+      },
+      {
+        type: "group",
+        direction: "column",
+        self_props: {
+          style: { margin: "0px" }
         },
-        self_props: { style: { border: "3px dashed blue" } },
-        items: [
-          {
-            type: "group",
-            direction: "column",
-            items: [
-              { id: "auton_moved", type: "checkbox", name: "moved in auton?" },
-              {
-                id: "auton_climb",
-                type: "radio",
-                name: "auton climb",
-                choices: ["climbed", "attempted", "not attempted"],
-              },
-            ],
-          },
-          {
-            type: "group",
-            direction: "column",
-            items: [
-              {
-                id: "tele_climb",
-                type: "radio",
-                name: "teleop climb",
-                choices: [
-                  "level 1",
-                  "level 2",
-                  "level 3",
-                  "attempted",
-                  "not attempted",
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      { id: "comments", type: "text", name: "comments" },
-      {
-        type: "group",
-        direction: "column",
-        self_props: { style: { border: "3px dashed orange" } },
-        items: [
-          {
-            id: "auton_neutral_passes",
-            type: "counter",
-            name: "(auton) pass from neutral zone",
-            increment: 3,
-          },
-          { id: "tele_neutral_passes",
-            type: "counter",
-            name: "(teleop) pass from neutral zone",
-            increment: 3,
-          },
-        ],
-      },
-      {
-        type: "group",
-        direction: "column",
-        self_props: { style: { border: "2px dashed purple" } },
+        child_props: {},
         items: [
           {
             type: "group",
             direction: "row",
             child_props: {
-              style: { flexGrow: 1, padding: "100px 0px 100px 0px" },
+              //style: { flexGrow: 1, padding: "100px 0px 100px 0px" },
+              style: { height: "200px" },
             },
             items: [
               {
                 type: "button",
-                label: "+1 missed",
+                label: "made low",
+                self_props: {
+                  style: { flexGrow: 2 }
+                },
                 onclick: () => {
-                  helperFunctions.addToSliderButton("balls_missed", 1);
+                  helperFunctions.addToSliderButton("made_low", 1);
+                  document.getElementById('subtract_last').onclick = () => { helperFunctions.addToSliderButton("made_low", -1);}
                 },
               },
               {
                 type: "button",
-                label: "+3 made",
+                label: "made high",
+                self_props: {
+                  style: { flexGrow: 3 }
+                },
                 onclick: () => {
-                  helperFunctions.addToSliderButton("balls_made", 3);
+                  helperFunctions.addToSliderButton("made_high", 1);
+                  document.getElementById('subtract_last').onclick = () => { helperFunctions.addToSliderButton("made_high", -1);}
                 },
               },
             ],
@@ -246,93 +346,91 @@ const pages = [
           {
             type: "group",
             direction: "row",
+            self_props: {
+              style: { margin: "0px" }
+            },
             child_props: {
-              style: {
-                flexGrow: 1,
-                padding: "10px 0px 10px 0px",
-                backgroundColor: "coral",
-              },
+              //style: { flexGrow: 1, padding: "100px 0px 100px 0px" },
+              style: { height: "150px", backgroundColor: "#65FF40" },
             },
             items: [
               {
                 type: "button",
-                label: "-1 missed",
+                label: "missed low",
+                self_props: {
+                  style: { flexGrow: 2 }
+                },
                 onclick: () => {
-                  helperFunctions.addToSliderButton("balls_missed", -1);
+                  helperFunctions.addToSliderButton("missed_low", 1);
+                  document.getElementById('subtract_last').onclick = () => { helperFunctions.addToSliderButton("missed_low", -1);}
                 },
               },
               {
                 type: "button",
-                label: "-3 made",
+                label: "missed high",
+                self_props: {
+                  style: { flexGrow: 3.1 }
+                },
                 onclick: () => {
-                  helperFunctions.addToSliderButton("balls_made", -3);
+                  helperFunctions.addToSliderButton("missed_high", 1);
+                  document.getElementById('subtract_last').onclick = () => { helperFunctions.addToSliderButton("missed_high", -1);} 
                 },
               },
             ],
           },
           {
             type: "group",
-            direction: "row",
-            self_props: { style: { border: "1px dashed blue" } },
+            direction: "column",
             items: [
               {
                 type: "group",
                 direction: "column",
-                self_props: { style: { flexGrow: 1 } },
                 items: [
                   {
-                    id: "balls_made",
-                    skip: true,
+                    id: "made_low",
                     type: "slider",
-                    name: "made",
+                    name: "made low",
                     min: 0,
-                    max: 100,
-                    increment: 3,
-                  },
-                  {
-                    id: "balls_missed",
-                    skip: true,
-                    type: "slider",
-                    name: "missed",
-                    min: 0,
-                    max: 100,
+                    max: 20,
                     increment: 1,
                   },
-                ],
+                  {
+                    id: "missed_low",
+                    type: "slider",
+                    name: "missed low",
+                    min: 0,
+                    max: 20,
+                    increment: 1,
+                  },
+                ]
               },
               {
                 type: "group",
                 direction: "column",
-                self_props: { style: { flex: "1" } },
-                child_props: { style: { flex: "1" } },
                 items: [
                   {
-                    label: "ADD",
-                    type: "button",
-                    onclick: () => {
-                      helperFunctions.push();
-                    },
+                    id: "made_high",
+                    type: "slider",
+                    name: "made high",
+                    min: 0,
+                    max: 50,
+                    increment: 1,
                   },
-                ],
-              },
-            ],
+                  {
+                    id: "missed_high",
+                    type: "slider",
+                    name: "missed high",
+                    min: 0,
+                    max: 50,
+                    increment: 1,
+                  },
+                ]
+              }
+            ]
           },
-        ],
+        ]
       },
-      {
-        id: "sprees",
-        type: "table",
-        columns: ["balls made", "balls missed"],
-        inputs: ["balls_made", "balls_missed"],
-        first_row_label: "A",
-      },
-      {
-        label: "Delete last row",
-        type: "button",
-        onclick: () => {
-          app.tables["sprees"].pop();
-        },
-      },
+      { id: "comments", type: "text", name: "closing comments" },
     ],
   },
   {

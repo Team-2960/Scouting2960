@@ -21,7 +21,7 @@ body {
 }
 
 .page_title {
-	font-family: 'europlate';
+	font-family: 'sans';
 	margin: 0px;
 }
 
@@ -80,7 +80,7 @@ table tr th {
 }
 
 .page_navigation_group * {
-	font-family: europlate;
+	font-family: sans;
 	align-self: center;
 }
 
