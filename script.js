@@ -250,7 +250,7 @@ const pages = [
                     type: "slider",
                     name: "made low",
                     min: 0,
-                    max: 20,
+                    max: 30,
                     increment: 1,
                   },
                   {
@@ -258,7 +258,7 @@ const pages = [
                     type: "slider",
                     name: "missed low",
                     min: 0,
-                    max: 20,
+                    max: 30,
                     increment: 1,
                   },
                 ]
@@ -272,7 +272,7 @@ const pages = [
                     type: "slider",
                     name: "made high",
                     min: 0,
-                    max: 50,
+                    max: 30,
                     increment: 1,
                   },
                   {
@@ -280,7 +280,7 @@ const pages = [
                     type: "slider",
                     name: "missed high",
                     min: 0,
-                    max: 50,
+                    max: 30,
                     increment: 1,
                   },
                 ]
@@ -391,7 +391,7 @@ const pages = [
                     type: "slider",
                     name: "made low",
                     min: 0,
-                    max: 20,
+                    max: 50,
                     increment: 1,
                   },
                   {
@@ -399,7 +399,7 @@ const pages = [
                     type: "slider",
                     name: "missed low",
                     min: 0,
-                    max: 20,
+                    max: 50,
                     increment: 1,
                   },
                 ]
